@@ -32,3 +32,20 @@ router.get('/setup', function(req, res) {
 
 
 module.exports = router;
+
+
+/*
+router.get('/setup', function(req, res) {
+
+	var nick = new User({
+	    name: 'ugur',
+		password: 'erdal',
+		admin: 'true'
+	});
+	nick.save(function (err) {
+		if (err) throw err;
+
+		console.log('User saved succesfully');
+		res.json({ succes:true });
+	});
+});*/
