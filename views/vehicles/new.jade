@@ -1,0 +1,33 @@
+extends ../layout
+
+block content
+	h1.
+		#{title}
+	form#formAddVehicle(name="addvehicle",method="post",action="/vehicles")
+		p Marka kodu: 
+			input#inputBrandcode(type="number", placeholder="3/9/8", name="brand_code")
+		p Tip kodu:
+			input#inputTypecode(type="number", placeholder="127..", name="type_code")
+		p Marka adı:
+			input#inputMarkaadi(type="text", placeholder="Bugatti..", name="brand_name")
+		p Tip adı: 
+			input#inputBrandname(type="text", name="type_name", placeholder="GIULIETTA 1.4 TB M.AIR 170 TCT PROG.PLU")
+		p Yıl: 
+			input#inputyears(type="number", name="y2015", placeholder="2015")
+			input#inputyears(type="number", name="y2014", placeholder="2014")
+			input#inputyears(type="number", name="y2013", placeholder="2013")
+			input#inputyears(type="number", name="y2012", placeholder="2012")
+			input#inputyears(type="number", name="y2011", placeholder="2011")
+			input#inputyears(type="number", name="y2010", placeholder="2010")
+			input#inputyears(type="number", name="y2009", placeholder="2009")
+			input#inputyears(type="number", name="y2008", placeholder="2008")
+			input#inputyears(type="number", name="y2007", placeholder="2007")
+			input#inputyears(type="number", name="y2006", placeholder="2006")
+			input#inputyears(type="number", name="y2005", placeholder="2005")
+			input#inputyears(type="number", name="y2004", placeholder="2004")
+			input#inputyears(type="number", name="y2003", placeholder="2003")
+			input#inputyears(type="number", name="y2002", placeholder="2002")
+			input#inputyears(type="number", name="y2001", placeholder="2001")
+
+		p
+			button#btnSubmit(type="submit") submit

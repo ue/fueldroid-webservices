@@ -1,0 +1,21 @@
+extends ../layout
+
+block content
+    h1.
+         #{title}
+    ul
+        - each vehicle, i in vehicles
+            li
+                = vehicle.name
+                = vehicle.badge
+                = vehicle.dob
+                = vehicle.isloved
+                = vehicle._id
+                form(action='/vehicles/#{vehicle._id}/edit',method='post',enctype='application/x-www-form-urlencoded')
+                    input(type='hidden',value='DELETE',name='_method')
+                    button(type='submit').
+                        Delete
+                p 
+                    a(href='/vehicles/#{vehicle._id}/edit') Edit
+                p
+                    a(href='/vehicles/#{vehicle._id}') Show
