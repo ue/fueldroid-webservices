@@ -12,6 +12,7 @@ var db = require('./model/db'),
     vehicle = require('./model/vehicles');
     user = require('./model/users');
 
+
 var routes = require('./routes/index'),
     blobs = require('./routes/blobs');
     vehicles = require('./routes/vehicles');
@@ -42,7 +43,6 @@ app.use('/', routes);
 app.use('/blobs', blobs);
 app.use('/vehicles', vehicles);
 app.use('/users', users);
-
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {
