@@ -78,13 +78,13 @@ router.route('/authenticate')
     			res.json({ success: false, message: 'User not found kul'});
 
     		} else if (user) {
-				console.log(user);
     			if (user.password != req.body.password) {
     				res.json({ success: false, message: 'şifre yalnış' });
     			} else {
     				var token = jwt.sign(User, app.get('superSecret'), {
 						expiresInMinutes: 1440
 					});
+					console.log(token);
     				res.json({
 						success: true,
 						message: 'token geldi',
@@ -95,6 +95,27 @@ router.route('/authenticate')
     	});
     });
 
+router.use(function(req, res, next) {
+	
+	var token = req.body.token || req.quary.token || req.headers['x-access-token'];
+
+	if (token) {
+		jwt.verify(token, app.get('superSecret'), function(err, decode) {
+			if (err) {
+				return res.json({ success: false, message: 'Misson Failed by Token'});
+			} else {
+				req.decode = decode;
+				next();
+			}
+		});
+
+	} else {
+		return res.status(403).send({
+			success: false,
+			message: 'No token provided'
+		});
+	}
+});
 
 
 router.get('/setup', function(req, res) {
