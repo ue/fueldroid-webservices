@@ -1,13 +1,31 @@
-//var app         = express();
 var express = require('express'),
     router = express.Router(),
     mongoose = require('mongoose'), //mongo connection
-    morgan      = require('morgan'),
-    jwt         = require('jsonwebtoken'), // token
+    morgan = require('morgan'),
     bodyParser = require('body-parser'), //parses information from POST
     methodOverride = require('method-override'); //used to manipulate POST
 
 var User = require('../model/users');
+var userModel = mongoose.model('User');
+var db = require('../model/db');
+
+var jwt = require('jsonwebtoken');
+var app = express();
+app.set('superSecret', db.secret); // secret variable
+/*
+
+router.use(bodyParser.urlencoded({ extended: true }))
+router.use(methodOverride(function(req, res){
+      if (req.body && typeof req.body === 'object' && '_method' in req.body) {
+        // look in urlencoded POST bodies and delete it
+        var method = req.body._method
+        delete req.body._method
+        return method
+      }
+}))
+
+*/
+
 
 router.use(bodyParser.urlencoded({ extended: true }))
 router.use(methodOverride(function(req, res){
@@ -20,11 +38,12 @@ router.use(methodOverride(function(req, res){
 }))
 
 
+
+
 router.route('/')
-//get all users
     .get(function (req, res, next) {
 
-    	mongoose.model('User').find({}, function (err, users) {
+    	userModel.find({}, function (err, users) {
     		if (err) {
     			return console.error(err);
     		} else {
@@ -51,20 +70,43 @@ router.route('/')
     			json:function(){
     				res.json(user);
     			}
-
     		});
     	}
     })
 });
 
 
+router.route('/authenticate')
+    .get(function (req, res) {
+    	userModel.findOne({ 
+    		name: req.body.name
+    	}, function (err, user) {
+    		if (err) throw err;
+
+    		if (!user) {
+    			res.json({ success: false, message: 'User not found kul'});
+
+    		} else if (user) {
+
+    			if (user.password != req.body.password) {
+    				res.json({ success: false, message: 'şifre yalnış' });
+    			} else {
+    				var token = jwt.sign(User, app.get('superSecret'), {
+						expiresInMinutes: 1440
+					});
+    				console.log(token);
+    				res.json({
+						success: true,
+						message: 'token geldi',
+						token: token
+					});
+    			}
+    		}
+    	});
+    });
 
 
 
-
-
-
-//not basic route first user register
 router.get('/setup', function(req, res) {
 
     var nick = new user({

@@ -8,14 +8,14 @@ var express = require('express'),
 var jwt = require('jsonwebtoken');
 
 var db = require('./model/db'),
-    blob = require('./model/blobs');
-    vehicle = require('./model/vehicles');
+    blob = require('./model/blobs'),
+    vehicle = require('./model/vehicles'),
     user = require('./model/users');
 
 
 var routes = require('./routes/index'),
-    blobs = require('./routes/blobs');
-    vehicles = require('./routes/vehicles');
+    blobs = require('./routes/blobs'),
+    vehicles = require('./routes/vehicles'),
     users = require('./routes/users');
 
 
@@ -27,8 +27,15 @@ var app = express();
 // view engine setup
 app.set('views', path.join(__dirname, 'views'));
 app.set('view engine', 'jade');
-//secreti normalde configde fakat buradan cekecekmi bakalım !!!
 app.set('superSecret', db.secret); // secret variable
+/*
+var token = jwt.sign(user, app.get('superSecret'), {
+                        expiresInMinutes: 1440
+                    });
+console.log(token);
+
+
+*/
 
 
 // uncomment after placing your favicon in /public
