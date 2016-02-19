@@ -9,36 +9,27 @@ var User = require('../model/users');
 var userModel = mongoose.model('User');
 var db = require('../model/db');
 
+// token
 var jwt = require('jsonwebtoken');
 var app = express();
 app.set('superSecret', db.secret); // secret variable
+
+
+router.use(bodyParser.urlencoded({ extended: true }))
+router.use(methodOverride(function(req, res){
+      if (req.body && typeof req.body === 'object' && '_method' in req.body) {
+        // look in urlencoded POST bodies and delete it
+        var method = req.body._method
+        delete req.body._method
+        return method
+      }
+}))
 /*
-
-router.use(bodyParser.urlencoded({ extended: true }))
-router.use(methodOverride(function(req, res){
-      if (req.body && typeof req.body === 'object' && '_method' in req.body) {
-        // look in urlencoded POST bodies and delete it
-        var method = req.body._method
-        delete req.body._method
-        return method
-      }
-}))
-
+var token = jwt.sign(User, app.get('superSecret'), {
+						expiresInMinutes: 1440
+					});
+console.log(token);
 */
-
-
-router.use(bodyParser.urlencoded({ extended: true }))
-router.use(methodOverride(function(req, res){
-      if (req.body && typeof req.body === 'object' && '_method' in req.body) {
-        // look in urlencoded POST bodies and delete it
-        var method = req.body._method
-        delete req.body._method
-        return method
-      }
-}))
-
-
-
 
 router.route('/')
     .get(function (req, res, next) {
@@ -77,7 +68,7 @@ router.route('/')
 
 
 router.route('/authenticate')
-    .get(function (req, res) {
+    .post(function (req, res) {
     	userModel.findOne({ 
     		name: req.body.name
     	}, function (err, user) {
@@ -87,14 +78,13 @@ router.route('/authenticate')
     			res.json({ success: false, message: 'User not found kul'});
 
     		} else if (user) {
-
+				console.log(user);
     			if (user.password != req.body.password) {
     				res.json({ success: false, message: 'şifre yalnış' });
     			} else {
     				var token = jwt.sign(User, app.get('superSecret'), {
 						expiresInMinutes: 1440
 					});
-    				console.log(token);
     				res.json({
 						success: true,
 						message: 'token geldi',
