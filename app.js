@@ -23,6 +23,7 @@ var routes = require('./routes/index'),
 //var users = require('./routes/users');
 
 var app = express();
+var apiRoutes = express.Router(); 
 
 // view engine setup
 app.set('views', path.join(__dirname, 'views'));
@@ -36,8 +37,6 @@ console.log(token);
 
 
 */
-
-
 // uncomment after placing your favicon in /public
 //app.use(favicon(__dirname + '/public/favicon.ico'));
 app.use(logger('dev'));
@@ -58,7 +57,12 @@ app.use(function(req, res, next) {
     var err = new Error('Not Found');
     err.status = 404;
     next(err);
+console.log("app js icierisi console log ");
 });
+
+
+
+
 
 
 
@@ -86,5 +90,6 @@ app.use(function(err, req, res, next) {
     });
 });
 
+app.use('/users', apiRoutes);
 
 module.exports = app;

@@ -6,7 +6,7 @@ var express = require('express'),
     methodOverride = require('method-override'); //used to manipulate POST
 
 var User = require('../model/users');
-var userModel = mongoose.model('User');
+var Users = mongoose.model('User');
 var db = require('../model/db');
 
 // token
@@ -23,6 +23,7 @@ router.use(methodOverride(function(req, res){
         delete req.body._method
         return method
       }
+      console.log("router use icerisi");
 }))
 /*
 var token = jwt.sign(User, app.get('superSecret'), {
@@ -34,7 +35,7 @@ console.log(token);
 router.route('/')
     .get(function (req, res, next) {
 
-    	userModel.find({}, function (err, users) {
+    	Users.find({}, function (err, users) {
     		if (err) {
     			return console.error(err);
     		} else {
@@ -45,6 +46,7 @@ router.route('/')
     			});
     		}
     	});
+
     })
 
     .post(function(req, res) {
@@ -69,7 +71,7 @@ router.route('/')
 
 router.route('/authenticate')
     .post(function (req, res) {
-    	userModel.findOne({ 
+    	Users.findOne({ 
     		name: req.body.name
     	}, function (err, user) {
     		if (err) throw err;
@@ -98,13 +100,13 @@ router.route('/authenticate')
 router.use(function(req, res, next) {
 	
 	var token = req.body.token || req.quary.token || req.headers['x-access-token'];
-
+	console.log(token);
 	if (token) {
-		jwt.verify(token, app.get('superSecret'), function(err, decode) {
+		jwt.verify(token, app.get('superSecret'), function(err, decoded) {
 			if (err) {
 				return res.json({ success: false, message: 'Misson Failed by Token'});
 			} else {
-				req.decode = decode;
+				req.decoded = decoded;
 				next();
 			}
 		});
@@ -115,8 +117,9 @@ router.use(function(req, res, next) {
 			message: 'No token provided'
 		});
 	}
-});
+})
 
+/*
 
 router.get('/setup', function(req, res) {
 
@@ -132,6 +135,11 @@ router.get('/setup', function(req, res) {
         res.json({ succes:true });
     });
 });
+
+
+
+*/
+
 
 
 module.exports = router;
