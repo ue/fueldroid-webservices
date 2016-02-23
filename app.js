@@ -45,11 +45,35 @@ app.use(bodyParser.urlencoded({ extended: false }));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
 
+
+app.use(function(req, res, next) {
+    console.log("router use");
+    var token = req.body.token || req.query.token || req.headers['x-access-token'];
+    console.log(token);
+    if (token) {
+        jwt.verify(token, app.get('superSecret'), function(err, decoded) {
+            if (err) {
+                return res.json({ success: false, message: 'Misson Failed by Token'});
+            } else {
+                req.decoded = decoded;
+                next();
+            }
+        });
+
+    } else {
+        return res.status(403).send({
+            success: false,
+            message: 'No token provided'
+        });
+    }
+});
+
+
 app.use('/', routes);
 app.use('/blobs', blobs);
 app.use('/vehicles', vehicles);
-app.use('/users', users);
-
+app.use('/api', users);
+app.use('/users', apiRoutes);
 
 
 // catch 404 and forward to error handler
@@ -89,6 +113,6 @@ app.use(function(err, req, res, next) {
     });
 });
 
-app.use('/users', apiRoutes);
+
 
 module.exports = app;

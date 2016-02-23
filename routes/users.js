@@ -63,7 +63,7 @@ router.route('/authenticate')
     	});
     });
 
-
+/*
 router.use(function(req, res, next) {
 	console.log("router use");
 	var token = req.body.token || req.query.token || req.headers['x-access-token'];
@@ -86,8 +86,8 @@ router.use(function(req, res, next) {
 	}
 });
 
-
-router.route('/')
+*/
+router.route('/users')
     .get(function (req, res, next) {
 
     	Users.find({}, function (err, users) {
@@ -101,7 +101,6 @@ router.route('/')
     			});
     		}
     	});
-
     })
 
     .post(function(req, res) {
