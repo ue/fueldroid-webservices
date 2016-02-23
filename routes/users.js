@@ -14,7 +14,7 @@ var jwt = require('jsonwebtoken');
 var app = express();
 app.set('superSecret', db.secret); // secret variable
 
-
+/*
 router.use(bodyParser.urlencoded({ extended: true }))
 router.use(methodOverride(function(req, res){
       if (req.body && typeof req.body === 'object' && '_method' in req.body) {
@@ -25,12 +25,36 @@ router.use(methodOverride(function(req, res){
       }
       console.log("router use icerisi");
 }))
+*/
 /*
 var token = jwt.sign(User, app.get('superSecret'), {
 						expiresInMinutes: 1440
 					});
 console.log(token);
 */
+
+router.use(function(req, res, next) {
+	console.log("router use");
+	var token = req.body.token || req.query.token || req.headers['x-access-token'];
+	console.log(token);
+	if (token) {
+		jwt.verify(token, app.get('superSecret'), function(err, decoded) {
+			if (err) {
+				return res.json({ success: false, message: 'Misson Failed by Token'});
+			} else {
+				req.decoded = decoded;
+				next();
+			}
+		});
+
+	} else {
+		return res.status(403).send({
+			success: false,
+			message: 'No token provided'
+		});
+	}
+});
+
 
 router.route('/')
     .get(function (req, res, next) {
@@ -97,29 +121,8 @@ router.route('/authenticate')
     	});
     });
 
-router.use(function(req, res, next) {
-	
-	var token = req.body.token || req.quary.token || req.headers['x-access-token'];
-	console.log(token);
-	if (token) {
-		jwt.verify(token, app.get('superSecret'), function(err, decoded) {
-			if (err) {
-				return res.json({ success: false, message: 'Misson Failed by Token'});
-			} else {
-				req.decoded = decoded;
-				next();
-			}
-		});
 
-	} else {
-		return res.status(403).send({
-			success: false,
-			message: 'No token provided'
-		});
-	}
-})
 
-/*
 
 router.get('/setup', function(req, res) {
 
@@ -138,7 +141,6 @@ router.get('/setup', function(req, res) {
 
 
 
-*/
 
 
 
