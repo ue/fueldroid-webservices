@@ -33,6 +33,37 @@ var token = jwt.sign(User, app.get('superSecret'), {
 console.log(token);
 */
 
+
+
+router.route('/authenticate')
+    .post(function (req, res) {
+    	Users.findOne({ 
+    		name: req.body.name
+    	}, function (err, user) {
+    		if (err) throw err;
+
+    		if (!user) {
+    			res.json({ success: false, message: 'User not found kul'});
+
+    		} else if (user) {
+    			if (user.password != req.body.password) {
+    				res.json({ success: false, message: 'şifre yalnış' });
+    			} else {
+    				var token = jwt.sign(User, app.get('superSecret'), {
+						expiresInMinutes: 1440
+					});
+					console.log(token);
+    				res.json({
+						success: true,
+						message: 'token geldi',
+						token: token
+					});
+    			}
+    		}
+    	});
+    });
+
+
 router.use(function(req, res, next) {
 	console.log("router use");
 	var token = req.body.token || req.query.token || req.headers['x-access-token'];
@@ -92,34 +123,6 @@ router.route('/')
     })
 });
 
-
-router.route('/authenticate')
-    .post(function (req, res) {
-    	Users.findOne({ 
-    		name: req.body.name
-    	}, function (err, user) {
-    		if (err) throw err;
-
-    		if (!user) {
-    			res.json({ success: false, message: 'User not found kul'});
-
-    		} else if (user) {
-    			if (user.password != req.body.password) {
-    				res.json({ success: false, message: 'şifre yalnış' });
-    			} else {
-    				var token = jwt.sign(User, app.get('superSecret'), {
-						expiresInMinutes: 1440
-					});
-					console.log(token);
-    				res.json({
-						success: true,
-						message: 'token geldi',
-						token: token
-					});
-    			}
-    		}
-    	});
-    });
 
 
 
