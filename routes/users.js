@@ -3,7 +3,8 @@ var express = require('express'),
     mongoose = require('mongoose'), //mongo connection
     morgan = require('morgan'),
     bodyParser = require('body-parser'), //parses information from POST
-    methodOverride = require('method-override'); //used to manipulate POST
+    methodOverride = require('method-override'),
+    md5 = require('sha1'); //used to manipulate POST
 
 var User = require('../model/users');
 var Users = mongoose.model('User');
@@ -35,21 +36,28 @@ console.log(token);
 
 
 
+
+
 router.route('/authenticate')
     .post(function (req, res) {
     	Users.findOne({ 
     		name: req.body.name
     	}, function (err, user) {
+    		var usertoken = user.name;
+    		console.log('selam');
+    		console.log(md5('message'));
+
+
     		if (err) throw err;
 
     		if (!user) {
-    			res.json({ success: false, message: 'User not found kul'});
+    			res.json({ success: false, message: 'User not found '});
 
     		} else if (user) {
     			if (user.password != req.body.password) {
-    				res.json({ success: false, message: 'şifre yalnış' });
+    				res.json({ success: false, message: 'Wrong password' });
     			} else {
-    				var token = jwt.sign(User, app.get('superSecret'), {
+    				var token = jwt.sign(user.password, app.get('superSecret'), {
 						expiresInMinutes: 1440
 					});
 					console.log(token);
@@ -63,7 +71,9 @@ router.route('/authenticate')
     	});
     });
 
-/*
+
+
+// token kontrolü
 router.use(function(req, res, next) {
 	console.log("router use");
 	var token = req.body.token || req.query.token || req.headers['x-access-token'];
@@ -86,7 +96,7 @@ router.use(function(req, res, next) {
 	}
 });
 
-*/
+
 router.route('/users')
     .get(function (req, res, next) {
 

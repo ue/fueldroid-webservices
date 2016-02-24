@@ -3,7 +3,8 @@ var express = require('express'),
     favicon = require('serve-favicon'),
     logger = require('morgan'),
     cookieParser = require('cookie-parser'),
-    bodyParser = require('body-parser');
+    bodyParser = require('body-parser'),
+    md5 = require('sha1');
 
 var jwt = require('jsonwebtoken');
 
@@ -16,7 +17,8 @@ var db = require('./model/db'),
 var routes = require('./routes/index'),
     blobs = require('./routes/blobs'),
     vehicles = require('./routes/vehicles'),
-    users = require('./routes/users');
+    users = require('./routes/users'),
+    tokenCtrl = require('./routes/tokenCtrl');
 
 
 
@@ -45,7 +47,7 @@ app.use(bodyParser.urlencoded({ extended: false }));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
 
-
+/*
 app.use(function(req, res, next) {
     console.log("router use");
     var token = req.body.token || req.query.token || req.headers['x-access-token'];
@@ -68,12 +70,13 @@ app.use(function(req, res, next) {
     }
 });
 
+*/
 
-app.use('/', routes);
-app.use('/blobs', blobs);
-app.use('/vehicles', vehicles);
+app.use('/',  routes);
+app.use('/blobs', tokenCtrl, blobs);
+app.use('/vehicles', tokenCtrl, vehicles);
 app.use('/api', users);
-app.use('/users', apiRoutes);
+app.use('/users',tokenCtrl, apiRoutes);
 
 
 // catch 404 and forward to error handler
