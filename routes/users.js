@@ -15,38 +15,18 @@ var jwt = require('jsonwebtoken');
 var app = express();
 app.set('superSecret', db.secret); // secret variable
 
-/*
-router.use(bodyParser.urlencoded({ extended: true }))
-router.use(methodOverride(function(req, res){
-      if (req.body && typeof req.body === 'object' && '_method' in req.body) {
-        // look in urlencoded POST bodies and delete it
-        var method = req.body._method
-        delete req.body._method
-        return method
-      }
-      console.log("router use icerisi");
-}))
-*/
-/*
-var token = jwt.sign(User, app.get('superSecret'), {
-						expiresInMinutes: 1440
-					});
-console.log(token);
-*/
-
-
-
-
 
 router.route('/authenticate')
     .post(function (req, res) {
     	Users.findOne({ 
     		name: req.body.name
     	}, function (err, user) {
-    		var usertoken = user.name;
-    		console.log('selam');
-    		console.log(md5('message'));
 
+    		var name = user.name,
+    		    password = md5(user.password),
+    		    admin=user.admin;
+
+    		var user_title = {name, password, email};
 
     		if (err) throw err;
 
@@ -57,8 +37,8 @@ router.route('/authenticate')
     			if (user.password != req.body.password) {
     				res.json({ success: false, message: 'Wrong password' });
     			} else {
-    				var token = jwt.sign(user.password, app.get('superSecret'), {
-						expiresInMinutes: 1440
+    				var token = jwt.sign(user_title, app.get('superSecret'), {
+						expiresInMinutes: 1
 					});
 					console.log(token);
     				res.json({
@@ -157,20 +137,3 @@ router.get('/setup', function(req, res) {
 
 
 module.exports = router;
-
-
-/*
-router.get('/setup', function(req, res) {
-
-	var nick = new User({
-	    name: 'ugur',
-		password: 'erdal',
-		admin: 'true'
-	});
-	nick.save(function (err) {
-		if (err) throw err;
-
-		console.log('User saved succesfully');
-		res.json({ succes:true });
-	});
-});*/

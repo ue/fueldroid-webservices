@@ -31,14 +31,8 @@ var apiRoutes = express.Router();
 app.set('views', path.join(__dirname, 'views'));
 app.set('view engine', 'jade');
 app.set('superSecret', db.secret); // secret variable
-/*
-var token = jwt.sign(user, app.get('superSecret'), {
-                        expiresInMinutes: 1440
-                    });
-console.log(token);
 
 
-*/
 // uncomment after placing your favicon in /public
 //app.use(favicon(__dirname + '/public/favicon.ico'));
 app.use(logger('dev'));
@@ -46,31 +40,6 @@ app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
-
-/*
-app.use(function(req, res, next) {
-    console.log("router use");
-    var token = req.body.token || req.query.token || req.headers['x-access-token'];
-    console.log(token);
-    if (token) {
-        jwt.verify(token, app.get('superSecret'), function(err, decoded) {
-            if (err) {
-                return res.json({ success: false, message: 'Misson Failed by Token'});
-            } else {
-                req.decoded = decoded;
-                next();
-            }
-        });
-
-    } else {
-        return res.status(403).send({
-            success: false,
-            message: 'No token provided'
-        });
-    }
-});
-
-*/
 
 app.use('/',  routes);
 app.use('/blobs', tokenCtrl, blobs);
@@ -86,13 +55,6 @@ app.use(function(req, res, next) {
     next(err);
 });
 
-
-
-
-
-
-
-// error handlers
 
 // development error handler
 // will print stacktrace
