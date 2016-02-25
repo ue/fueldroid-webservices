@@ -19,28 +19,27 @@ app.set('superSecret', db.secret); // secret variable
 router.route('/authenticate')
     .post(function (req, res) {
     	Users.findOne({ 
-    		name: req.body.name
+    		username: req.body.username
     	}, function (err, user) {
-
-    		var name = user.name,
-    		    password = md5(user.password),
+/*
+    		var username = user.username,
     		    admin=user.admin;
 
-    		var user_title = {name, password, email};
-
+    		var user_ = {username, admin};
+*/
     		if (err) throw err;
 
     		if (!user) {
+    			console.log("authenticate here user" + user);
     			res.json({ success: false, message: 'User not found '});
 
     		} else if (user) {
     			if (user.password != req.body.password) {
     				res.json({ success: false, message: 'Wrong password' });
     			} else {
-    				var token = jwt.sign(user_title, app.get('superSecret'), {
-						expiresInMinutes: 1
+    				var token = jwt.sign(user.username, app.get('superSecret'), {
+						expiresInMinutes: 1500
 					});
-					console.log(token);
     				res.json({
 						success: true,
 						message: 'token geldi',
@@ -53,7 +52,7 @@ router.route('/authenticate')
 
 
 
-// token kontrolü
+// token controler
 router.use(function(req, res, next) {
 	console.log("router use");
 	var token = req.body.token || req.query.token || req.headers['x-access-token'];
@@ -91,35 +90,50 @@ router.route('/users')
     			});
     		}
     	});
-    })
+    });
 
+
+router.route('/users/create')
     .post(function(req, res) {
-    	mongoose.model('User').create({
-    		name: 'admin',
-    		password: 'admin',
-    		admin: 'true'
-    }, function (err, user) {
-    	if (err) {
-    		res.send("database de bi sıgındı var");
-    	} else {
-    		console.log('users data' + user);
-    		res.format({
-    			json:function(){
-    				res.json(user);
-    			}
-    		});
-    	}
-    })
+    	Users.findOne({
+    		username: req.body.username
+    	}, function (err, user) {
+
+    		if (err) throw err;
+
+    		if (!user) {
+		    mongoose.model('User').create({
+		    	username: req.body['username'],
+		    	password: req.body['password'],
+		    	admin: req.body['admin']
+		    }, function (err, user) {
+		    	if (err) throw err; 
+		    	else {
+		    		console.log('users data' + user);
+		    		res.format({
+		    			json:function(){
+		    				res.json(user);
+		    			}
+		    		});
+		    	}
+		    })
+    			console.log(user + " user here");
+    		} else if (user) {
+    			res.json({
+					success: false,
+					message: 'Boyle bir kullanıcı adı mevcut'
+				});
+    		}
+    	});
 });
 
 
 
-
-
+// setıp get  STR
 router.get('/setup', function(req, res) {
 
     var nick = new user({
-        name: 'ugur',
+        username: 'ugur',
         password: 'erdal',
         admin: 'true'
     });
@@ -130,10 +144,6 @@ router.get('/setup', function(req, res) {
         res.json({ succes:true });
     });
 });
-
-
-
-
 
 
 module.exports = router;
