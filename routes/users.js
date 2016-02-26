@@ -51,6 +51,36 @@ router.route('/authenticate')
     });
 
 
+router.route('/users/create')
+    .post(function(req, res) {
+    	Users.findOne({
+    		username: req.body.username
+    	}, function (err, user) {
+    		if (err) throw err;
+    		if (!user) {
+		    mongoose.model('User').create({
+		    	username: req.body['username'],
+		    	password: req.body['password'],
+		    	admin: req.body['admin']
+		    }, function (err, user) {
+		    	if (err) throw err; 
+		    	else {
+		    		console.log('users data' + user);
+		    		res.format({
+		    			json:function(){
+		    				res.json(user);
+		    			}
+		    		});
+		    	}
+		    })
+    		} else if (user) {
+    			res.json({
+					success: false,
+					message: 'Boyle bir kullanıcı adı mevcut'
+				});
+    		}
+    	});
+});
 
 // token controler
 router.use(function(req, res, next) {
@@ -92,41 +122,61 @@ router.route('/users')
     	});
     });
 
-
-router.route('/users/create')
-    .post(function(req, res) {
-    	Users.findOne({
-    		username: req.body.username
-    	}, function (err, user) {
-
-    		if (err) throw err;
-
-    		if (!user) {
-		    mongoose.model('User').create({
-		    	username: req.body['username'],
-		    	password: req.body['password'],
-		    	admin: req.body['admin']
-		    }, function (err, user) {
-		    	if (err) throw err; 
-		    	else {
-		    		console.log('users data' + user);
-		    		res.format({
-		    			json:function(){
-		    				res.json(user);
-		    			}
-		    		});
-		    	}
-		    })
-    			console.log(user + " user here");
-    		} else if (user) {
-    			res.json({
-					success: false,
-					message: 'Boyle bir kullanıcı adı mevcut'
-				});
+router.route('/users/:id')
+	.get(function (req, res) {
+		Users.findOne({
+			_id: req.params.id
+		}, function (err, user) {
+			if (!user) {
+    			res.format({
+    				json:function() {
+    					res.json({
+    						success: false,
+    						message: "User not found"
+    					});
+    				}
+    			});
+    		} else {
+    			res.format({
+    				json:function() {
+    					res.json(user);
+    				}
+    			});
     		}
-    	});
+
+		});
+	});
+
+// DELETE USERS param: /_id
+router.delete('/users/:id', function(req, res){
+    Users.remove({ _id: req.params.id }, function(err, user){
+    	if (err) throw err;
+    	res.json({
+			success: true,
+			message: 'User delete'
+		});
+    });
 });
 
+
+// UPDATE USERS param : /_id  head : admin
+//req token
+
+router.put('/users/:id', function(req, res){
+console.log("here");
+	Users.update({ _id: req.params.id }, {
+		password: req.body.password
+	}, function(err, user){
+		if (err) throw err;
+		res.json({
+			success: true,
+			message: 'Update işlemi başarılı'
+		});
+	})
+});
+
+
+/* 56d00380707c516c2927438a */
 
 
 // setıp get  STR
