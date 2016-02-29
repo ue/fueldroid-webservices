@@ -16,3 +16,13 @@ post -login res token
 post -register 
 -username password admin require
 
+
+/api/users/:id
+
+put
+ @pram  : id
+ header : password
+ 
+delete 
+ @pram  : id
+ header : password

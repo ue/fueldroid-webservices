@@ -84,7 +84,6 @@ router.route('/users/create')
 
 // token controler
 router.use(function(req, res, next) {
-	console.log("router use");
 	var token = req.body.token || req.query.token || req.headers['x-access-token'];
 	console.log(token);
 	if (token) {
